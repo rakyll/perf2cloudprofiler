@@ -51,3 +51,5 @@ https://console.cloud.google.com/profiler/tree-profile;type=CPU?project=PROJECT
 
 * Users need to install [perf_to_profile](https://github.com/google/perf_data_converter) in their PATH.
 * perf to pprof converter drops the symbol names, see [google/perf_data_converter#81](https://github.com/google/perf_data_converter/issues/81).
+* Converter fails to convert some kernel profiles.
+* We should try to guess the profile type from the data.
