@@ -14,10 +14,8 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/google/pprof/profile"
-
 	"cloud.google.com/go/compute/metadata"
-
+	"github.com/google/pprof/profile"
 	"google.golang.org/api/option"
 	gtransport "google.golang.org/api/transport/grpc"
 	pb "google.golang.org/genproto/googleapis/devtools/cloudprofiler/v2"
