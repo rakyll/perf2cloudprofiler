@@ -145,3 +145,5 @@ func resetTime(pprofBytes []byte) ([]byte, error) {
 	}
 	return buf.Bytes(), nil
 }
+
+// TODO(jbd): Check binary dependencies and install if not available.
