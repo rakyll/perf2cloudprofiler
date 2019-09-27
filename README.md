@@ -1,5 +1,7 @@
 # perf2cloudprofiler
 
+[![Build Status](https://travis-ci.com/rakyll/perf2cloudprofiler.svg?token=Quf3mWAszVwsMXDMWxkm&branch=master)](https://travis-ci.com/rakyll/perf2cloudprofiler)
+
 Uploads perf output to Google Cloud Profiler.
 
 ## Installation
