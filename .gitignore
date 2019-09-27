@@ -1,1 +1,3 @@
 bin/
+perf.data
+perf.pprof
