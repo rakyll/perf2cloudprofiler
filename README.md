@@ -45,7 +45,7 @@ $ perf2cloudprofiler -target=tree-profile
 https://console.cloud.google.com/profiler/tree-profile;type=CPU?project=PROJECT
 ```
 
-![Cloud Profiler Screenshot](https://i.imgur.com/4jsjxzJ.png)
+![Cloud Profiler Screenshot](https://i.imgur.com/KRQcmZ5.png)
 
 ## Known issues
 
