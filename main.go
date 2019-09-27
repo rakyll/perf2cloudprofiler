@@ -29,6 +29,7 @@ var (
 	project string
 	zone    string
 	input   string
+	target  string
 )
 
 const (
@@ -41,6 +42,7 @@ func main() {
 	flag.StringVar(&project, "project", "", "")
 	flag.StringVar(&zone, "zone", "", "")
 	flag.StringVar(&input, "i", "perf.data", "")
+	flag.StringVar(&target, "target", "", "")
 	flag.Parse()
 
 	if project == "" {
@@ -58,8 +60,8 @@ func main() {
 		zone = z
 	}
 
-	if input == "" {
-		log.Fatalf("Provide perf output file via -i")
+	if target == "" {
+		target = input
 	}
 
 	opts := []option.ClientOption{
@@ -80,7 +82,7 @@ func main() {
 	if err := upload(ctx, pprofBytes); err != nil {
 		log.Fatalf("Cannot upload to Google Cloud Profiler: %v", err)
 	}
-	fmt.Printf("https://console.cloud.google.com/profiler/%s;type=%s?project=%s\n", url.PathEscape(input), pb.ProfileType_CPU, project)
+	fmt.Printf("https://console.cloud.google.com/profiler/%s;type=%s?project=%s\n", url.PathEscape(target), pb.ProfileType_CPU, project)
 }
 
 func convert(perfFile string) (pprofBytes []byte, err error) {
@@ -114,7 +116,7 @@ func upload(ctx context.Context, payload []byte) error {
 			ProfileType: pb.ProfileType_CPU,
 			Deployment: &pb.Deployment{
 				ProjectId: project,
-				Target:    input,
+				Target:    target,
 				Labels: map[string]string{
 					"zone": zone,
 				},
