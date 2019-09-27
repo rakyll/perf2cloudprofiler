@@ -40,7 +40,7 @@ func main() {
 	ctx := context.Background()
 	flag.StringVar(&project, "project", "", "")
 	flag.StringVar(&zone, "zone", "", "")
-	flag.StringVar(&input, "i", "", "")
+	flag.StringVar(&input, "i", "perf.data", "")
 	flag.Parse()
 
 	if project == "" {
