@@ -104,7 +104,8 @@ func convert(perfFile string) (pprofBytes []byte, err error) {
 }
 
 func upload(ctx context.Context, payload []byte) error {
-	// Reset time.
+	// Reset time, otherwise old profiles wont be shown
+	// at Cloud profiler due to data retention limits.
 	resetted, err := resetTime(payload)
 	if err != nil {
 		log.Printf("Cannot reset the profile's time: %v", err)
