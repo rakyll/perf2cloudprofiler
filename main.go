@@ -31,8 +31,9 @@ var (
 )
 
 const (
-	apiAddr = "cloudprofiler.googleapis.com:443"
-	scope   = "https://www.googleapis.com/auth/monitoring.write"
+	apiAddr       = "cloudprofiler.googleapis.com:443"
+	scope         = "https://www.googleapis.com/auth/monitoring.write"
+	perfToProfile = "perf_to_profile"
 )
 
 func main() {
@@ -90,7 +91,7 @@ func convert(perfFile string) (pprofBytes []byte, err error) {
 	}
 	defer os.Remove(tmpFile.Name())
 
-	cmd := exec.Command("perf_to_profile",
+	cmd := exec.Command(perfToProfile,
 		"-i", perfFile,
 		"-o", tmpFile.Name(),
 		"-f")
@@ -109,7 +110,7 @@ func upload(ctx context.Context, payload []byte) error {
 		log.Printf("Cannot reset the profile's time: %v", err)
 	}
 
-	req := pb.CreateOfflineProfileRequest{
+	req := &pb.CreateOfflineProfileRequest{
 		Parent: "projects/" + project,
 		Profile: &pb.Profile{
 			ProfileType: pb.ProfileType_CPU,
@@ -126,7 +127,7 @@ func upload(ctx context.Context, payload []byte) error {
 
 	// TODO(jbd): Is there a way without having
 	// to load the profile all in memory?
-	_, err = client.CreateOfflineProfile(ctx, &req)
+	_, err = client.CreateOfflineProfile(ctx, req)
 	return err
 }
 
