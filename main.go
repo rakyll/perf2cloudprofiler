@@ -119,6 +119,7 @@ func upload(ctx context.Context, payload []byte) error {
 	req := &pb.CreateOfflineProfileRequest{
 		Parent: "projects/" + project,
 		Profile: &pb.Profile{
+			// TODO(jbd): Guess the profile type from the input.
 			ProfileType: pb.ProfileType_CPU,
 			Deployment: &pb.Deployment{
 				ProjectId: project,
