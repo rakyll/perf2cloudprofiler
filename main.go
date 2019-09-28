@@ -24,10 +24,11 @@ import (
 var (
 	client pb.ProfilerServiceClient
 
-	project string
-	zone    string
-	input   string
-	target  string
+	project  string
+	zone     string
+	instance string
+	input    string
+	target   string
 )
 
 const (
@@ -40,9 +41,12 @@ func main() {
 	ctx := context.Background()
 	flag.StringVar(&project, "project", "", "")
 	flag.StringVar(&zone, "zone", "", "")
+	flag.StringVar(&instance, "instance", "", "")
 	flag.StringVar(&input, "i", "perf.data", "")
 	flag.StringVar(&target, "target", "", "")
 	flag.Parse()
+
+	// TODO(jbd): Automatically detect input. Don't convert if pprof.
 
 	if project == "" {
 		id, err := metadata.ProjectID()
@@ -52,22 +56,24 @@ func main() {
 		project = id
 	}
 	if zone == "" {
-		z, err := metadata.Zone()
-		if err != nil {
-			log.Fatalf("Cannot resolve the GCP zone from the metadata server: %v", err)
-		}
-		zone = z
+		// Ignore error. If we cannot resolve the instance name,
+		// it would be too aggressive to fatal exit.
+		zone, _ = metadata.Zone()
+	}
+
+	if instance == "" {
+		// Ignore error. If we cannot resolve the instance name,
+		// it would be too aggressive to fatal exit.
+		instance, _ = metadata.InstanceName()
 	}
 
 	if target == "" {
 		target = input
 	}
 
-	opts := []option.ClientOption{
+	conn, err := gtransport.Dial(ctx,
 		option.WithEndpoint(apiAddr),
-		option.WithScopes(scope),
-	}
-	conn, err := gtransport.Dial(ctx, opts...)
+		option.WithScopes(scope))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -84,7 +90,7 @@ func main() {
 	fmt.Printf("https://console.cloud.google.com/profiler/%s;type=%s?project=%s\n", url.PathEscape(target), pb.ProfileType_CPU, project)
 }
 
-func convert(perfFile string) (pprofBytes []byte, err error) {
+func convert(file string) (pprofBytes []byte, err error) {
 	tmpFile, err := ioutil.TempFile("", "perf")
 	if err != nil {
 		return nil, err
@@ -92,7 +98,7 @@ func convert(perfFile string) (pprofBytes []byte, err error) {
 	defer os.Remove(tmpFile.Name())
 
 	cmd := exec.Command(perfToProfile,
-		"-i", perfFile,
+		"-i", file,
 		"-o", tmpFile.Name(),
 		"-f")
 	_, err = cmd.CombinedOutput()
@@ -118,6 +124,7 @@ func upload(ctx context.Context, payload []byte) error {
 				ProjectId: project,
 				Target:    target,
 				Labels: map[string]string{
+					// TODO(jbd): Add instance name.
 					"zone": zone,
 				},
 			},
