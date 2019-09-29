@@ -44,6 +44,7 @@ func main() {
 	flag.StringVar(&instance, "instance", "", "")
 	flag.StringVar(&input, "i", "perf.data", "")
 	flag.StringVar(&target, "target", "", "")
+	flag.Usage = usageAndExit
 	flag.Parse()
 
 	// TODO(jbd): Automatically detect input. Don't convert if pprof.
@@ -154,3 +155,19 @@ func resetTime(pprofBytes []byte) ([]byte, error) {
 }
 
 // TODO(jbd): Check binary dependencies and install if not available.
+
+const usageText = `perf2cloudprofiler [-i perf.data]
+
+Other options:
+-target   Target Cloud Profiler profile name to upload data to.
+-project  Google Cloud project name, tries to automatically
+          resolve if none is set.
+-zone     Google Cloud zone, tries to automatically resolve if
+          none is set.
+-instance Google Compute Engine instance name, tries to resolve
+          automatically if none is set.`
+
+func usageAndExit() {
+	fmt.Println(usageText)
+	os.Exit(1)
+}
