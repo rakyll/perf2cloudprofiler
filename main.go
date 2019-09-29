@@ -125,8 +125,8 @@ func upload(ctx context.Context, payload []byte) error {
 				ProjectId: project,
 				Target:    target,
 				Labels: map[string]string{
-					// TODO(jbd): Add instance name.
-					"zone": zone,
+					"zone":     zone,
+					"instance": instance,
 				},
 			},
 			ProfileBytes: resetted,
